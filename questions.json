@@ -1,0 +1,17 @@
+[
+	{
+		"question": "What is something?",
+		"options": ["answer1", "answer2"],
+		"answer": "answer2"
+	},
+		{
+		"question": "What is something2?",
+		"options": ["answer1", "answer2"],
+		"answer": "answer1"
+	},
+		{
+		"question": "What is something3?",
+		"options": ["answer1", "answer2"],
+		"answer": "answer2"
+	}
+]
