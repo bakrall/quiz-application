@@ -28,7 +28,7 @@
 
                 radio.setAttribute('type', 'radio');
                 radio.setAttribute('id', 'options' + i + '' + j);
-                radio.setAttribute('value', j);
+                radio.setAttribute('value', i + ':' + dataModel[i].options[j]);
                 radio.setAttribute('name', 'option' + i);
 
                 var label = document.createElement('label');
