@@ -12,39 +12,78 @@
 	    </header>
     	<section id="questions">
     	</section>
+        <section id="score"></section>
     </body>
     <script>
-    	var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": "answer2"},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": "answer1"},{"question": "What is something3?","options": ["answer1", "answer2"],"answer": "answer2"}]';
+        function init() {
+        	var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": "answer2"},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": "answer1"},{"question": "What is something3?","options": ["answer1", "answer2"],"answer": "answer2"}]';
 
-		var dataModel = JSON.parse(questions);
+    		var dataModel = JSON.parse(questions);
 
-		for(var i = 0; i < dataModel.length; i++) {
-			var article = document.createElement('article');
+    		for(var i = 0; i < dataModel.length; i++) {
+    			var article = document.createElement('article');
 
-			article.innerHTML = '<p>' + dataModel[i].question + '</p>';
-            //i = current iteration index
-            for(j = 0; j < dataModel[i].options.length; j++) {
-                var radio = document.createElement('input');
+    			article.innerHTML = '<p>' + dataModel[i].question + '</p>';
+                //i = current iteration index
+                for(j = 0; j < dataModel[i].options.length; j++) {
+                    var radio = document.createElement('input');
 
-                radio.setAttribute('type', 'radio');
-                radio.setAttribute('id', 'options' + i + '' + j);
-                radio.setAttribute('value', i + ':' + dataModel[i].options[j]);
-                radio.setAttribute('name', 'option' + i);
+                    radio.setAttribute('type', 'radio');
+                    radio.setAttribute('id', 'options' + i + '' + j);
+                    radio.setAttribute('value', i + ':' + dataModel[i].options[j]);
+                    radio.setAttribute('name', 'option' + i);
 
-                var label = document.createElement('label');
+                    var label = document.createElement('label');
 
-                label.setAttribute('for', 'options' + i + '' + j);
-                label.innerHTML = dataModel[i].options[j];
+                    label.setAttribute('for', 'options' + i + '' + j);
+                    label.innerHTML = dataModel[i].options[j];
 
-                var breakTag = document.createElement('br');
+                    var breakTag = document.createElement('br');
 
-                article.append(radio);
-                article.append(label);
-                article.append(breakTag);
+                    article.append(radio);
+                    article.append(label);
+                    article.append(breakTag);
+                }
+
+    			document.getElementById('questions').append(article);
+    		}; 
+
+            var button = document.createElement('button');
+            button.innerHTML = 'Submit';
+            button.onclick = function () {
+                var radioButtons = document.querySelectorAll('[id^=options]');
+                var score = 0;
+                
+                for (var i = 0; i < radioButtons.length; i++) {
+                    if (radioButtons[i].checked) {
+                        var answer = radioButtons[i].value.split(':');
+                        console.log(answer);
+
+                    console.log(dataModel[answer[0]].answer === answer[1]);
+
+                        if (dataModel[answer[0]].answer === answer[1]) {
+                            score++;
+                        } 
+                    }
+                }
+
+                showResults(score);
             }
 
-			document.getElementById('questions').append(article);
-		}; 
-    	
+            var breakTag = document.createElement('br');
+
+        	document.getElementById('questions').append(breakTag);
+            document.getElementById('questions').append(button);
+        }
+
+        function showResults(score) {
+                var scoreSection = document.getElementById('score');
+                var article = document.createElement('article');
+
+                article.innerHTML = "<p> Your score is <b>" + score + "</b></p";
+                scoreSection.append(article);
+        }
+
+        window.onload = init;
     </script>
 </html>
