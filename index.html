@@ -16,7 +16,7 @@
     </body>
     <script>
         function init() {
-        	var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": "answer2"},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": "answer1"},{"question": "What is something3?","options": ["answer1", "answer2"],"answer": "answer2"}]';
+        	var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": ["answer2"]},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": ["answer1", "answer2"]},{"question": "What is something3?","options": ["answer1", "answer2", "answer3"],"answer": ["answer2", "answer3"]}]';
 
     		var dataModel = JSON.parse(questions);
 
@@ -26,12 +26,12 @@
     			article.innerHTML = '<p>' + dataModel[i].question + '</p>';
                 //i = current iteration index
                 for(j = 0; j < dataModel[i].options.length; j++) {
-                    var radio = document.createElement('input');
+                    var checkbox = document.createElement('input');
 
-                    radio.setAttribute('type', 'radio');
-                    radio.setAttribute('id', 'options' + i + '' + j);
-                    radio.setAttribute('value', i + ':' + dataModel[i].options[j]);
-                    radio.setAttribute('name', 'option' + i);
+                    checkbox.setAttribute('type', 'checkbox');
+                    checkbox.setAttribute('id', 'options' + i + '' + j);
+                    checkbox.setAttribute('value', i + ':' + dataModel[i].options[j]);
+                    checkbox.setAttribute('name', 'option' + i);
 
                     var label = document.createElement('label');
 
@@ -40,7 +40,7 @@
 
                     var breakTag = document.createElement('br');
 
-                    article.append(radio);
+                    article.append(checkbox);
                     article.append(label);
                     article.append(breakTag);
                 }
@@ -49,19 +49,21 @@
     		}; 
 
             var button = document.createElement('button');
+
             button.innerHTML = 'Submit';
+
             button.onclick = function () {
-                var radioButtons = document.querySelectorAll('[id^=options]');
+                var checkboxElements = document.querySelectorAll('[id^=options]');
                 var score = 0;
-                
-                for (var i = 0; i < radioButtons.length; i++) {
-                    if (radioButtons[i].checked) {
-                        var answer = radioButtons[i].value.split(':');
-                        console.log(answer);
+                    
+                for (var i = 0; i < checkboxElements.length; i++) {
+                    if (checkboxElements[i].checked) {
+                        var answer = checkboxElements[i].value.split(':');
+                        var correctAnswer = dataModel[answer[0]].answer.filter(function(data) {
+                            return  data === answer[1];
+                        });
 
-                    console.log(dataModel[answer[0]].answer === answer[1]);
-
-                        if (dataModel[answer[0]].answer === answer[1]) {
+                        if (correctAnswer.length >= 1) {
                             score++;
                         } 
                     }
