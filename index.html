@@ -7,23 +7,23 @@
 
     </head>
     <body>
-    	<header>
-	    	Quiz Application
-	    </header>
-    	<section id="questions">
-    	</section>
+        <header>
+            Quiz Application
+        </header>
+        <section id="questions">
+        </section>
         <section id="score"></section>
     </body>
     <script>
         function init() {
-        	var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": ["answer2"]},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": ["answer1", "answer2"]},{"question": "What is something3?","options": ["answer1", "answer2", "answer3"],"answer": ["answer2", "answer3"]}]';
+            var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": ["answer2"]},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": ["answer1", "answer2"]},{"question": "What is something3?","options": ["answer1", "answer2", "answer3"],"answer": ["answer2", "answer3"]}]';
 
-    		var dataModel = JSON.parse(questions);
+            var dataModel = JSON.parse(questions);
 
-    		for(var i = 0; i < dataModel.length; i++) {
-    			var article = document.createElement('article');
+            for(var i = 0; i < dataModel.length; i++) {
+                var article = document.createElement('article');
 
-    			article.innerHTML = '<p>' + dataModel[i].question + '</p>';
+                article.innerHTML = '<p>' + dataModel[i].question + '</p>';
                 //i = current iteration index
                 for(j = 0; j < dataModel[i].options.length; j++) {
                     var checkbox = document.createElement('input');
@@ -45,8 +45,8 @@
                     article.append(breakTag);
                 }
 
-    			document.getElementById('questions').append(article);
-    		}; 
+                document.getElementById('questions').append(article);
+            }; 
 
             var button = document.createElement('button');
 
@@ -55,16 +55,21 @@
             button.onclick = function () {
                 var checkboxElements = document.querySelectorAll('[id^=options]');
                 var score = 0;
+                var correctAnswer = [];
                     
                 for (var i = 0; i < checkboxElements.length; i++) {
                     if (checkboxElements[i].checked) {
-                        var answer = checkboxElements[i].value.split(':');
-                        var correctAnswer = dataModel[answer[0]].answer.filter(function(data) {
-                            return  data === answer[1];
+                        var option = checkboxElements[i].value.split(':');
+                        var correctAnswersLength = dataModel[option[0]].answer.length;
+                        dataModel[option[0]].answer.forEach(function(data) {
+                            if (data === option[1]) {
+                                    correctAnswer.push(data);
+                            }
                         });
 
-                        if (correctAnswer.length >= 1) {
+                        if (correctAnswer.length > 0 & correctAnswer.length === correctAnswersLength) {
                             score++;
+                            correctAnswer = [];
                         } 
                     }
                 }
@@ -74,7 +79,7 @@
 
             var breakTag = document.createElement('br');
 
-        	document.getElementById('questions').append(breakTag);
+            document.getElementById('questions').append(breakTag);
             document.getElementById('questions').append(button);
         }
 
