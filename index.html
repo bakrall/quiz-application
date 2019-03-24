@@ -53,24 +53,32 @@
             button.innerHTML = 'Submit';
 
             button.onclick = function () {
-                var checkboxElements = document.querySelectorAll('[id^=options]');
+                var questions = document.querySelectorAll('#questions article');
+                // var checkboxElements = question.childNodes('[id^=options]');
                 var score = 0;
                 var correctAnswer = [];
+                var checkboxesChecked = 0;
                     
-                for (var i = 0; i < checkboxElements.length; i++) {
-                    if (checkboxElements[i].checked) {
-                        var option = checkboxElements[i].value.split(':');
-                        var correctAnswersLength = dataModel[option[0]].answer.length;
-                        dataModel[option[0]].answer.forEach(function(data) {
-                            if (data === option[1]) {
-                                    correctAnswer.push(data);
-                            }
-                        });
+                for (var i = 0; i < questions.length; i++) {
+                    for (var j = 0; j < questions[i].childNodes.length; j++) {
+                        if (questions[i].childNodes[j].nodeName === "INPUT" && questions[i].childNodes[j].checked) {
+                            var option = questions[i].childNodes[j].value.split(':');
+                            var correctAnswersLength = dataModel[option[0]].answer.length;
 
-                        if (correctAnswer.length > 0 & correctAnswer.length === correctAnswersLength) {
-                            score++;
-                            correctAnswer = [];
-                        } 
+                            checkboxesChecked++;
+                            
+                            dataModel[option[0]].answer.forEach(function(data) {
+                                if (data === option[1]) {
+                                        correctAnswer.push(data);
+                                }
+                            });
+
+                            if (correctAnswer.length === correctAnswersLength && checkboxesChecked === correctAnswersLength) {
+                                score++;
+                                correctAnswer = [];
+                                checkboxesChecked = 0;
+                            } 
+                        }
                     }
                 }
 
@@ -87,8 +95,14 @@
                 var scoreSection = document.getElementById('score');
                 var article = document.createElement('article');
 
+                removeNodes(scoreSection);
                 article.innerHTML = "<p> Your score is <b>" + score + "</b></p";
                 scoreSection.append(article);
+        }
+
+        function removeNodes(node) {
+            while (node.hasChildNodes())
+                node.removeChild(node.lastChild);
         }
 
         window.onload = init;
