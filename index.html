@@ -15,80 +15,88 @@
         <section id="score"></section>
     </body>
     <script>
+        var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": ["answer2"]},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": ["answer1", "answer2"]},{"question": "What is something3?","options": ["answer1", "answer2", "answer3"],"answer": ["answer2", "answer3"]}]';
+
+        var dataModel = JSON.parse(questions);
+
         function init() {
-            var questions = '[{"question": "What is something?","options": ["answer1", "answer2"],"answer": ["answer2"]},{"question": "What is something2?","options": ["answer1", "answer2"],"answer": ["answer1", "answer2"]},{"question": "What is something3?","options": ["answer1", "answer2", "answer3"],"answer": ["answer2", "answer3"]}]';
+            renderQuizQuestions();
+            renderSubmitButton();
+            bindUIevents();
+        }
 
-            var dataModel = JSON.parse(questions);
+        function bindUIevents() {
+            var button = document.querySelector('button');
 
-            for(var i = 0; i < dataModel.length; i++) {
+            button.addEventListener('click', submitAnswers);
+        }
+
+        function renderQuizQuestions() {
+            dataModel.forEach(function(questionSet, i) {
                 var article = document.createElement('article');
 
-                article.innerHTML = '<p>' + dataModel[i].question + '</p>';
-                //i = current iteration index
-                for(j = 0; j < dataModel[i].options.length; j++) {
-                    var checkbox = document.createElement('input');
+                article.innerHTML = '<p>' + questionSet.question + '</p>';
+
+                questionSet.options.forEach(function(option, j) {
+                    var checkbox = document.createElement('input'),
+                        label = document.createElement('label'),
+                        breakTag = document.createElement('br');
 
                     checkbox.setAttribute('type', 'checkbox');
                     checkbox.setAttribute('id', 'options' + i + '' + j);
-                    checkbox.setAttribute('value', i + ':' + dataModel[i].options[j]);
+                    checkbox.setAttribute('value', i + ':' + option);
                     checkbox.setAttribute('name', 'option' + i);
 
-                    var label = document.createElement('label');
-
                     label.setAttribute('for', 'options' + i + '' + j);
-                    label.innerHTML = dataModel[i].options[j];
+                    label.innerHTML = option;
 
-                    var breakTag = document.createElement('br');
-
-                    article.append(checkbox);
-                    article.append(label);
-                    article.append(breakTag);
-                }
+                    article.append(checkbox, label, breakTag);
+                });
 
                 document.getElementById('questions').append(article);
-            }; 
+            }); 
+        }
 
-            var button = document.createElement('button');
+        function renderSubmitButton() {
+            var button = document.createElement('button'),
+                breakTag = document.createElement('br');
 
             button.innerHTML = 'Submit';
 
-            button.onclick = function () {
-                var questions = document.querySelectorAll('#questions article');
-                // var checkboxElements = question.childNodes('[id^=options]');
-                var score = 0;
-                var correctAnswer = [];
-                var checkboxesChecked = 0;
-                    
-                for (var i = 0; i < questions.length; i++) {
-                    for (var j = 0; j < questions[i].childNodes.length; j++) {
-                        if (questions[i].childNodes[j].nodeName === "INPUT" && questions[i].childNodes[j].checked) {
-                            var option = questions[i].childNodes[j].value.split(':');
-                            var correctAnswersLength = dataModel[option[0]].answer.length;
+            document.getElementById('questions').append(breakTag, button);
+        }
 
-                            checkboxesChecked++;
+        function submitAnswers() {
+            var questions = document.querySelectorAll('#questions article'),
+                score = 0;
+
+            questions.forEach(function(questionSet) {
+                var correctAnswer = [],
+                    checkboxesChecked = 0;
+
+                questionSet.childNodes.forEach(function(question) {
+                    if (question.nodeName === "INPUT" && question.checked) {
+                        var option = question.value.split(':'),
+                            correctAnswersLength = dataModel[option[0]].answer.length;
+
+                        checkboxesChecked++;
                             
-                            dataModel[option[0]].answer.forEach(function(data) {
-                                if (data === option[1]) {
-                                        correctAnswer.push(data);
-                                }
-                            });
+                        dataModel[option[0]].answer.forEach(function(data) {
+                            if (data === option[1]) {
+                                    correctAnswer.push(data);
+                            }
+                        });
 
-                            if (correctAnswer.length === correctAnswersLength && checkboxesChecked === correctAnswersLength) {
-                                score++;
-                                correctAnswer = [];
-                                checkboxesChecked = 0;
-                            } 
+                        if (correctAnswer.length === correctAnswersLength && checkboxesChecked === correctAnswersLength) {
+                            score++;
+                            correctAnswer = [];
+                            checkboxesChecked = 0;
                         }
                     }
-                }
+                });
+            });
 
-                showResults(score);
-            }
-
-            var breakTag = document.createElement('br');
-
-            document.getElementById('questions').append(breakTag);
-            document.getElementById('questions').append(button);
+            showResults(score);
         }
 
         function showResults(score) {
